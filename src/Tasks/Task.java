@@ -1,23 +1,23 @@
-package Tasks;
+package tasks;
 
 import java.util.Objects;
-import java.util.Scanner;
 
 public class Task {
 
 
-    protected Integer id;
-    protected String name;
-    protected String description;
-    protected StatusTask status;
+    private int id;
+    private String name;
+    private String description;
+    private StatusTask status;
 
 
-    public Task(String name, String description, StatusTask status, Integer id) {
-        this.id = id;
+    public Task(String name, String description, StatusTask status) {
         this.name = name;
         this.description = description;
         this.status = status;
     }
+
+
 
     @Override
     public String toString() {
@@ -42,13 +42,6 @@ public class Task {
         return Objects.hash(id);
     }
 
-    //    @Override
-//    public String toString() {
-//        return name + " (" + status + ")\n" +
-//        "Описание: " + description;
-//    }
-
-
     public String getDescription() {
         return description;
     }
@@ -65,11 +58,11 @@ public class Task {
         this.name = name;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
