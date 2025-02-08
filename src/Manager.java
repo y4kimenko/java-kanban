@@ -1,42 +1,43 @@
-import Tasks.Epic;
-import Tasks.StatusTask;
-import Tasks.Subtask;
-import Tasks.Task;
-
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import tasks.*;
+import java.util.*;
 
 
 public class Manager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private static final HashMap<Integer, Task> tasks = new HashMap<>();
+    private static final HashMap<Integer, Epic> epics = new HashMap<>();
+    private static final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-    public int GeneratedId = 0;
+    private int GeneratedId = 1;
 
+// ==================== вывод списков ==============================
+    public void printAllTasks(){
+        System.out.println(tasks);
+    }
 
+    public void printAllEpics(){
+        System.out.println(epics);
+    }
+
+    public void printAllSubtasks(){
+        System.out.println(subtasks);
+    }
 // ======================= Удаление по индификатору =======================
     public boolean removeTaskById(int taskId) {
-        if (tasks.containsKey(taskId)) {
-            tasks.remove(taskId);
-            return true;
-        } else {
-            return false;
-        }
-
+        return tasks.remove(taskId) != null;
     }
 
     public boolean removeSubtaskById(int subtaskId) {
         Subtask removed = subtasks.remove(subtaskId);
 
         if (removed != null) {
-            // удаление из списка свзанного epic
-            Epic epic = epics.get(subtasks.get(subtaskId).getIndexEpic());
+            // удаление из списка связанного epic
+
+            // Я до конца не понял как сделать то, что вы предложили кроме того, как присвоить индификаторы public HashMap или добавить им геттеры, но как-то уже не очень
+            // Замечание, которые вы оставляли: всё нормально сделано, но надо добавить в эпик соответствующие методы и будет еще красивее
+            Epic epic = epics.get(subtasks.get(subtaskId).getEpicId());
             if (epic != null) {
                 epic.getSubTasks().remove(subtaskId);
+                recalculateEpicStatus(epic);
             }
 
             return true;
@@ -48,11 +49,8 @@ public class Manager {
     public boolean removeEpicById(int epicId) {
         Epic removed = epics.remove(epicId);
         if (removed != null) {
-            if (removed.getSubTasks() != null) {
-                ArrayList<Integer> removedSubtasks = removed.getSubTasks();
-                for (Integer subtaskId : removedSubtasks) {
-                    removeSubtaskById(subtaskId);
-                }
+            for (Integer subtaskId : removed.getSubTasks()) {
+                subtasks.remove(subtaskId);
             }
 
             return true;
@@ -84,10 +82,8 @@ public class Manager {
 
     public void removeAllEpics() {
         if (!epics.isEmpty()) {
-            for (Subtask subtask : subtasks.values()) {
-               subtask.setIndexEpic(null);
-            }
             epics.clear();
+            subtasks.clear();
         }
 
     }
@@ -106,33 +102,85 @@ public class Manager {
 // ======================= Методы создания и обновления =======================
 
     public Task createTask(Task task) {
-        if (Objects.nonNull(task.getId())) {
-            return task;
-        }
 
         int newId = generateId();
         task.setId(newId);
-
+        // Вы имеете в виду, чтобы я реализовал заполнение полей объекта через консоль (тот же самый вопрос и про изменение)
         tasks.put(newId, task);
         return task;
     }
 
     public Task updateTask(Task updatedTask) {
-        if (Objects.nonNull(updatedTask.getId())) {
+
+        if (updatedTask.getId() < 0){
             return updatedTask;
         }
-
+// Как мне объяснил преподаватель: что это и есть вариант ничего не делать
+//
         if (!tasks.containsKey(updatedTask.getId())) {
             return updatedTask;
         }
 
-        tasks.put(updatedTask.getId(), updatedTask);
-        return updatedTask;
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+
+            System.out.println("\t\tЧто вы бы хотели изменить в вашем Task?");
+            System.out.println("1) name: " + updatedTask.getName() + ";" );
+            System.out.println("2) status: " + updatedTask.getStatus() + ";");
+            System.out.println("3) description: " + updatedTask.getDescription() + ";");
+            System.out.println("\t\t0 - выход.");
+            System.out.print("Ввод: ");
+
+            switch (scanner.nextInt()) {
+                case 1:
+                    System.out.print("Новое имя: ");
+                    scanner.nextLine();
+                    updatedTask.setName(scanner.nextLine());
+                    break;
+                case 2:
+                    System.out.println("Выберите какой статус вы бы хотели присвоить");
+                    System.out.println("1) " + StatusTask.NEW);
+                    System.out.println("2) " + StatusTask.IN_PROGRESS);
+                    System.out.println("3) " + StatusTask.DONE);
+                    System.out.print("Ввод: ");
+                    switch (scanner.nextInt()){
+                        case 1:
+                            updatedTask.setStatus(StatusTask.NEW);
+                            break;
+                        case 2:
+                            updatedTask.setStatus(StatusTask.IN_PROGRESS);
+                            break;
+                        case 3:
+                            updatedTask.setStatus(StatusTask.DONE);
+                            break;
+                        default:
+                            System.out.println("Неверное значение.");
+                    }
+                    break;
+                case 3:
+                    System.out.print("Новое описание: ");
+                    scanner.nextLine();
+                    updatedTask.setDescription(scanner.nextLine());
+                    break;
+                case 0:
+
+                    tasks.put(updatedTask.getId(), updatedTask);
+                    return updatedTask;
+
+                default:
+                    System.out.println("Введено неверное значение!");
+
+            }
+        }
+
+
+
 
     }
 
     public Epic createEpic(Epic epic) {
-        if (Objects.nonNull(epic.getId())) {
+        if (epic.getId() < 0) {
             return epic;
         }
 
@@ -144,26 +192,61 @@ public class Manager {
     }
 
     public Epic updateEpic(Epic updatedEpic) {
-        if (Objects.nonNull(updatedEpic.getId())) {
+        if (updatedEpic.getId() < 0) {
             return updatedEpic;
         }
 
         if (!epics.containsKey(updatedEpic.getId())) {
             return updatedEpic;
         }
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
 
-        epics.put(updatedEpic.getId(), updatedEpic);
-        return updatedEpic;
+            System.out.println("\t\tЧто вы бы хотели изменить в вашем Epic?");
+            System.out.println("1) name: " + updatedEpic.getName() + ";");
+            System.out.println("2) description: " + updatedEpic.getDescription() + ";");
+            System.out.println("\t\t0 - выход.");
+            System.out.print("Ввод: ");
+
+            switch (scanner.nextInt()) {
+                case 1:
+
+                    System.out.print("Новое имя: ");
+                    scanner.nextLine();
+                    updatedEpic.setName(scanner.nextLine());
+                    break;
+
+                case 2:
+
+                    System.out.print("Новое описание: ");
+                    scanner.nextLine();
+                    updatedEpic.setDescription(scanner.nextLine());
+                    break;
+                case 0:
+
+                    epics.put(updatedEpic.getId(), updatedEpic);
+                    return updatedEpic;
+
+                default:
+                    System.out.println("Введено неверное значение!");
+
+            }
+        }
     }
 
+
+
+
     public Subtask createSubtask(Subtask subtask) {
-        if (Objects.nonNull(subtask.getId())) {
+
+        if (subtask.getId() < 0) {
             return subtask;
         }
-        if (Objects.nonNull(subtask.getIndexEpic())){
+        if (subtask.getEpicId() < 0){
             return subtask;
         }
-        if (!epics.containsKey(subtask.getIndexEpic())) {
+
+        if (!epics.containsKey(subtask.getEpicId())) {
             return subtask;
         }
 
@@ -171,14 +254,15 @@ public class Manager {
         subtask.setId(newId);
         subtasks.put(newId, subtask);
 
-        Epic epic = epics.get(subtask.getIndexEpic());
-        epic.getSubTasks().add(newId);
+        Epic epic = epics.get(subtask.getEpicId());
+        epic.addSubTask(subtask.getId());
+        recalculateEpicStatus(epic);
 
         return subtask;
     }
 
     public Subtask updateSubtask(Subtask updatedSubtask) {
-        if (Objects.nonNull(updatedSubtask.getId())) {
+        if (updatedSubtask.getId() < 0) {
             return updatedSubtask;
         }
 
@@ -186,15 +270,64 @@ public class Manager {
             return updatedSubtask;
         }
 
-        if (!subtasks.containsKey(updatedSubtask.getIndexEpic())) {
+        if (!epics.containsKey(updatedSubtask.getEpicId())) {
             return updatedSubtask;
         }
 
-        recalculateEpicStatus(epics.get(updatedSubtask.getIndexEpic()));
 
-        subtasks.put(updatedSubtask.getId(), updatedSubtask);
-        return updatedSubtask;
+        Scanner scanner = new Scanner(System.in);
 
+        while (true) {
+
+            System.out.println("\t\tЧто вы бы хотели изменить в вашем Subtask?");
+            System.out.println("1) name: " + updatedSubtask.getName() + ";");
+            System.out.println("2) status: " + updatedSubtask.getStatus() + ";");
+            System.out.println("3) description: " + updatedSubtask.getDescription() + ";");
+            System.out.println("\t\t0 - выход.");
+            System.out.print("Ввод: ");
+
+            switch (scanner.nextInt()) {
+                case 1:
+                    System.out.print("Новое имя: ");
+                    scanner.nextLine();
+                    updatedSubtask.setName(scanner.nextLine());
+                    break;
+                case 2:
+                    System.out.println("Выберите какой статус вы бы хотели присвоить");
+                    System.out.println("1) " + StatusTask.NEW);
+                    System.out.println("2) " + StatusTask.IN_PROGRESS);
+                    System.out.println("3) " + StatusTask.DONE);
+                    System.out.print("Ввод: ");
+                    switch (scanner.nextInt()) {
+                        case 1:
+                            updatedSubtask.setStatus(StatusTask.NEW);
+                            break;
+                        case 2:
+                            updatedSubtask.setStatus(StatusTask.IN_PROGRESS);
+                            break;
+                        case 3:
+                            updatedSubtask.setStatus(StatusTask.DONE);
+                            break;
+                        default:
+                            System.out.println("Неверное значение.");
+                    }
+                    break;
+                case 3:
+                    System.out.print("Новое описание: ");
+                    scanner.nextLine();
+                    updatedSubtask.setDescription(scanner.nextLine());
+                    break;
+                case 0:
+                    recalculateEpicStatus(epics.get(updatedSubtask.getEpicId()));
+                    subtasks.put(updatedSubtask.getId(), updatedSubtask);
+                    return updatedSubtask;
+
+                default:
+                    System.out.println("Введено неверное значение!");
+
+            }
+
+        }
     }
 
 // ======================= Дополнительные методы =======================
@@ -238,17 +371,21 @@ public class Manager {
 
     public ArrayList<Subtask> getSubtaskByIndexEpic(int indexEpic) {
         Epic epic = epics.get(indexEpic);
-        ArrayList<Subtask> subtasks = new ArrayList<>();
+        ArrayList<Subtask> subtaskArrayList = new ArrayList<>();
 
         if (epic != null){
+            Subtask subtask;
             for (Integer id : epic.getSubTasks()) {
-                if (subtasks.get(id) != null){
-                    subtasks.add(subtasks.get(id));
+                subtask = subtaskArrayList.get(id);
+
+                if (subtask != null){
+                    subtaskArrayList.add(subtask);
                 }
             }
         }
-        return subtasks;
+        return subtaskArrayList;
     }
+
 
 }
 
