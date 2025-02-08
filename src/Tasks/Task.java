@@ -17,7 +17,13 @@ public class Task {
         this.status = status;
     }
 
-
+    // Копирующий конструктор
+    public Task(Task task) {
+        this.id = task.id;
+        this.name = task.name;
+        this.description = task.description;
+        this.status = task.status;
+    }
 
     @Override
     public String toString() {

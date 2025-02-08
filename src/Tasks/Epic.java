@@ -10,6 +10,12 @@ public class Epic extends Task {
         super(name, description, StatusTask.NEW);
     }
 
+    // копирующий конструктор
+    public Epic(Epic epic) {
+        super(epic);
+    subTasks.addAll(epic.subTasks);
+    }
+
     @Override
     public String toString() {
         return "Epic{" +
