@@ -13,7 +13,7 @@ public class Epic extends Task {
     // копирующий конструктор
     public Epic(Epic epic) {
         super(epic);
-    subTasks.addAll(epic.subTasks);
+        subTasks.addAll(epic.subTasks);
     }
 
     @Override
