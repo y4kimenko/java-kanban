@@ -1,4 +1,4 @@
-package tasks;
+package main.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +32,12 @@ public class Epic extends Task {
     }
 
     // ----------------------- методы связанные SubTask ------------------------------------
-    public void addSubTask(int id) {
+    public Boolean addSubTask(int id) {
         if (!subTasks.contains(id)) {
             subTasks.add(id);
+            return true;
         }
+        return false;
     }
 
     public void removeSubTask(int id) {
