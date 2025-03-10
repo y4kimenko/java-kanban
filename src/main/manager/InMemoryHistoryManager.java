@@ -3,16 +3,14 @@ package main.manager;
 
 import main.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private static final List<Task> history = new ArrayList<>();
+    private final Deque<Task> history = new ArrayDeque<>();
 
     @Override
-    public List<Task> getHistory(){
-        return new ArrayList<Task>(history);
+    public Deque<Task> getHistory(){
+        return new ArrayDeque<>(history) ;
     }
 
     @Override
@@ -21,7 +19,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (history.size() == 10) {
                 history.removeFirst();
             }
-            history.add(new Task(task));
+            history.addLast(new Task(task));
         }
     }
 }

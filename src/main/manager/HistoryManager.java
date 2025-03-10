@@ -3,11 +3,12 @@ package main.manager;
 import main.tasks.Task;
 
 
-import java.util.List;
+import java.util.Deque;
+import java.util.Queue;
 
 public interface HistoryManager {
     void add(Task task);
 
-    List<Task> getHistory();
+    Deque<Task> getHistory();
 
 }
