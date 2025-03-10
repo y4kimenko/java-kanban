@@ -1,6 +1,7 @@
 package main.manager;
 
-import java.util.ArrayList;
+
+import java.util.List;
 
 import main.tasks.*;
 
@@ -21,7 +22,7 @@ class InMemoryHistoryManagerTest {
         task.setStatus(StatusTask.IN_PROGRESS);
         manager.searchTaskById(task.getId());
 
-        ArrayList<Task> history = manager.getHistory();
+        List<Task> history = manager.getHistory();
         assertEquals("test1", history.get(0).getName());
         assertEquals("descrption1", history.get(0).getDescription());
         assertEquals(StatusTask.NEW, history.get(0).getStatus());

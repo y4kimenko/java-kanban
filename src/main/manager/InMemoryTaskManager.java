@@ -322,7 +322,7 @@ public class InMemoryTaskManager implements TaskManager {
         return true;
     }
 
-    
+
     private void recalculateEpicStatus(Epic epic) {
         List<Integer> subtaskIds = epic.getSubTasks();
         if (subtaskIds.isEmpty()) {
@@ -356,7 +356,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     }
 
-    
+    @Override
     public ArrayList<Subtask> getSubtaskByIndexEpic(int indexEpic) {
         Epic epic = epics.get(indexEpic);
         ArrayList<Subtask> subtaskArrayList = new ArrayList<>();
@@ -374,7 +374,8 @@ public class InMemoryTaskManager implements TaskManager {
         return subtaskArrayList;
     }
 
-    public ArrayList<Task> getHistory(){
+    @Override
+    public List<Task> getHistory(){
         return new ArrayList<>(historyManager.getHistory());
     }
 }
