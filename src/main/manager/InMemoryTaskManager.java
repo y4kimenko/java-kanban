@@ -1,14 +1,17 @@
 package main.manager;
 
-import main.tasks.*;
+import main.tasks.Epic;
+import main.tasks.Task;
+import main.tasks.Subtask;
+import main.tasks.StatusTask;
 
 import java.util.*;
 
 
 public class InMemoryTaskManager implements TaskManager {
-    private static final HashMap<Integer, Task> tasks = new HashMap<>();
-    private static final HashMap<Integer, Epic> epics = new HashMap<>();
-    private static final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
     private final HistoryManager historyManager = Managers.getDefaultHistoryManager();
 
