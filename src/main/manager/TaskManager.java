@@ -5,7 +5,9 @@ import main.tasks.Epic;
 import main.tasks.Subtask;
 import main.tasks.Task;
 
+
 import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
     // ==================== вывод списков ==============================
@@ -57,7 +59,8 @@ public interface TaskManager {
 
     Subtask updateSubtask(Subtask updatedSubtask);
 
+    ArrayList<Subtask> getSubtaskByIndexEpic(int indexEpic);
 
-    ArrayList<Task> getHistory();
+    List<Task> getHistory();
 
 }
