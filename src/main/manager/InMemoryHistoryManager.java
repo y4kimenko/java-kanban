@@ -6,7 +6,7 @@ import main.tasks.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final Deque<Task> history = new ArrayDeque<>();
+    private final List<Task> history = new LinkedList<>();
 
     @Override
     public Deque<Task> getHistory(){
