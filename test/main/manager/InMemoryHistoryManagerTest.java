@@ -15,19 +15,32 @@ class InMemoryHistoryManagerTest {
         TaskManager manager = Managers.getDefaultTaskManager();
 
         Task task = new Task("test1", "descrption1", StatusTask.NEW);
+        Task task2 = new Task("test2", "descrption2", StatusTask.NEW);
 
         manager.createTask(task);
+        manager.createTask(task2);
         manager.searchTaskById(task.getId());
+        manager.searchTaskById(task2.getId());
 
-        task.setStatus(StatusTask.IN_PROGRESS);
+        assertEquals(List.of(task, task2), manager.getHistory(), "В истории должен остаться только последний просмотр каждой задачи");
+
+    }
+
+    @Test
+    void testRemovingDataInHistory(){
+        TaskManager manager = Managers.getDefaultTaskManager();
+
+        Task task = new Task("test1", "descrption1", StatusTask.NEW);
+        Task task2 = new Task("test2", "descrption2", StatusTask.NEW);
+
+        manager.createTask(task);
+        manager.createTask(task2);
         manager.searchTaskById(task.getId());
+        manager.searchTaskById(task2.getId());
 
-        List<Task> history = manager.getHistory();
-        assertEquals("test1", history.get(0).getName());
-        assertEquals("descrption1", history.get(0).getDescription());
-        assertEquals(StatusTask.NEW, history.get(0).getStatus());
+        manager.removeTaskById(task.getId());
 
+        assertEquals(List.of(task2), manager.getHistory(), "removeTaskById(id) должен убирать задачу из истории");
 
-        assertEquals(StatusTask.IN_PROGRESS, history.get(1).getStatus());
     }
 }

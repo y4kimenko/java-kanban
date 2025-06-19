@@ -52,7 +52,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
 // ============ Вспомогательные методы ===============
-    public void linkLast(Node node) {
+    private void linkLast(Node node) {
         if (!Objects.isNull(node)) {
             if (tail == null){
                 head = tail = node;
@@ -65,7 +65,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    public void removeNode(Node removeNode) {
+    private void removeNode(Node removeNode) {
         if (Objects.isNull(removeNode)) return;
         if (Objects.isNull(head)) return;
         if (history.containsValue(removeNode)) {
