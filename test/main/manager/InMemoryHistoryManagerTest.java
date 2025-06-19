@@ -1,17 +1,18 @@
 package main.manager;
 
 
+import main.tasks.StatusTask;
+import main.tasks.Task;
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 
-import main.tasks.*;
-
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class InMemoryHistoryManagerTest {
     @Test
-    void testSavingDataInHistory(){
+    void testSavingDataInHistory() {
         TaskManager manager = Managers.getDefaultTaskManager();
 
         Task task = new Task("test1", "descrption1", StatusTask.NEW);
@@ -27,7 +28,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void testRemovingDataInHistory(){
+    void testRemovingDataInHistory() {
         TaskManager manager = Managers.getDefaultTaskManager();
 
         Task task = new Task("test1", "descrption1", StatusTask.NEW);

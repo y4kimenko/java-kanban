@@ -3,7 +3,10 @@ package main.manager;
 
 import main.tasks.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 
 public class InMemoryHistoryManager implements HistoryManager {
@@ -23,9 +26,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     private final Map<Integer, Node> history = new HashMap<Integer, Node>();
 
     @Override
-    public ArrayList<Task> getHistory(){
+    public ArrayList<Task> getHistory() {
         ArrayList<Task> history = new ArrayList<>();
-        for(Node node = head; node != null; node = node.next) {
+        for (Node node = head; node != null; node = node.next) {
             history.add(node.task);
         }
         return history;
@@ -51,13 +54,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         history.remove(id);
     }
 
-// ============ Вспомогательные методы ===============
+    // ============ Вспомогательные методы ===============
     private void linkLast(Node node) {
         if (!Objects.isNull(node)) {
-            if (tail == null){
+            if (tail == null) {
                 head = tail = node;
-            }
-            else {
+            } else {
                 tail.next = node;
                 node.prev = tail;
                 tail = node;
@@ -71,18 +73,16 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (history.containsValue(removeNode)) {
             history.remove(removeNode.task.getId());
 
-                    if(removeNode.prev != null) {
-                        removeNode.prev.next = removeNode.next;
-                    }
-                    else {
-                        head = removeNode.next;
-                    }
-                    if(removeNode.next != null) {
-                        removeNode.next.prev = removeNode.prev;
-                    }
-                    else {
-                        tail = removeNode.prev;
-                    }
+            if (removeNode.prev != null) {
+                removeNode.prev.next = removeNode.next;
+            } else {
+                head = removeNode.next;
+            }
+            if (removeNode.next != null) {
+                removeNode.next.prev = removeNode.prev;
+            } else {
+                tail = removeNode.prev;
+            }
         }
     }
 

@@ -1,18 +1,21 @@
 package main.manager;
 
 
-import main.tasks.*;
-
-
+import main.tasks.Epic;
+import main.tasks.StatusTask;
+import main.tasks.Subtask;
+import main.tasks.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class InMemoryTaskManagerTest {
     private TaskManager manager;
+
     @BeforeEach
     void setUp() {
         manager = Managers.getDefaultTaskManager();
@@ -123,8 +126,8 @@ class InMemoryTaskManagerTest {
 
         manager.removeTaskById(task.getId());
 
-        assertEquals(List.of(task2),manager.getHistory(), "removeTaskById(id) должен убирать задачу из истории");
-        assertEquals(null, manager.searchTaskById(task.getId()), "removeTaskById(id) должен убирать задачу из списка tasks");
+        assertEquals(List.of(task2), manager.getHistory(), "removeTaskById(id) должен убирать задачу из истории");
+        assertNull(manager.searchTaskById(task.getId()), "removeTaskById(id) должен убирать задачу из списка tasks");
     }
 
     @Test
@@ -139,8 +142,8 @@ class InMemoryTaskManagerTest {
 
         manager.removeEpicById(epic.getId());
 
-        assertEquals(List.of(epic2),manager.getHistory(), "removeEpicById(id) должен убирать задачу из истории");
-        assertEquals(null, manager.searchEpicById(epic.getId()), "removeEpicById(id) должен убирать задачу из списка epics");
+        assertEquals(List.of(epic2), manager.getHistory(), "removeEpicById(id) должен убирать задачу из истории");
+        assertNull(manager.searchEpicById(epic.getId()), "removeEpicById(id) должен убирать задачу из списка epics");
     }
 
     @Test
@@ -158,8 +161,8 @@ class InMemoryTaskManagerTest {
         manager.searchSubtaskById(subtask2.getId());
         manager.removeSubtaskById(subtask.getId());
 
-        assertEquals(List.of(subtask2), manager.getHistory(), "removeSubtaskById(id) должен убирать задачу из истории" );
-        assertEquals(null, manager.searchSubtaskById(subtask.getId()), "removeSubtaskById(id) должен убирать задачу из списка epics");
+        assertEquals(List.of(subtask2), manager.getHistory(), "removeSubtaskById(id) должен убирать задачу из истории");
+        assertNull(manager.searchSubtaskById(subtask.getId()), "removeSubtaskById(id) должен убирать задачу из списка epics");
 
     }
 }

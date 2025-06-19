@@ -2,7 +2,8 @@ package main.tasks;
 
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EpicTest {
     @Test
@@ -16,7 +17,7 @@ class EpicTest {
     }
 
     @Test
-    void ImpossibilityOfAddingEpicToItselfAsASubtask(){
+    void ImpossibilityOfAddingEpicToItselfAsASubtask() {
         Epic epic1 = new Epic("test1", "descrption1");
         Epic epic2 = new Epic(epic1);
 

@@ -1,9 +1,9 @@
 package main.manager;
 
 import main.tasks.Epic;
-import main.tasks.Task;
-import main.tasks.Subtask;
 import main.tasks.StatusTask;
+import main.tasks.Subtask;
+import main.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,23 +20,23 @@ public class InMemoryTaskManager implements TaskManager {
 
     private int generatedId = 1;
 
-// ==================== вывод списков ==============================
+    // ==================== вывод списков ==============================
     @Override
-    public void printAllTasks(){
+    public void printAllTasks() {
         System.out.println(tasks);
     }
 
     @Override
-    public void printAllEpics(){
+    public void printAllEpics() {
         System.out.println(epics);
     }
 
     @Override
-    public void printAllSubtasks(){
+    public void printAllSubtasks() {
         System.out.println(subtasks);
     }
 
-// ======================= Удаление по индификатору =======================
+    // ======================= Удаление по индификатору =======================
     @Override
     public boolean removeTaskById(int taskId) {
         historyManager.remove(taskId); // Удаление из истории
@@ -170,7 +170,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (task.getId() < 0) {
             return task;
         }
-        if (checkoutId(id, task)){
+        if (checkoutId(id, task)) {
             task.setId(id);
             tasks.put(id, task);
             return task;
@@ -217,7 +217,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic.getId() < 0) {
             return epic;
         }
-        if (checkoutId(id, epic)){
+        if (checkoutId(id, epic)) {
             epic.setId(id);
             epics.put(id, epic);
             return epic;
@@ -249,7 +249,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask.getId() < 0) {
             return subtask;
         }
-        if (subtask.getEpicId() < 0){
+        if (subtask.getEpicId() < 0) {
             return subtask;
         }
 
@@ -273,11 +273,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask.getId() < 0) {
             return subtask;
         }
-        if (subtask.getEpicId() < 0){
+        if (subtask.getEpicId() < 0) {
             return subtask;
         }
 
-        if (checkoutId(id, subtask)){
+        if (checkoutId(id, subtask)) {
             subtask.setId(id);
             subtasks.put(id, subtask);
 
@@ -311,9 +311,6 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.put(updatedSubtask.getId(), updatedSubtask);
         return updatedSubtask;
     }
-
-
-
 
 
 // ======================= Дополнительные методы =======================
@@ -357,15 +354,15 @@ public class InMemoryTaskManager implements TaskManager {
         boolean allDone = true;
         boolean allNew = true;
 
-        for (Integer id : subtaskIds){
-            if (subtasks.get(id) == null){
+        for (Integer id : subtaskIds) {
+            if (subtasks.get(id) == null) {
                 continue;
             }
             if (subtasks.get(id).getStatus() != StatusTask.DONE) {
                 allDone = false;
 
             }
-            if (subtasks.get(id).getStatus() != StatusTask.NEW){
+            if (subtasks.get(id).getStatus() != StatusTask.NEW) {
                 allNew = false;
             }
         }
@@ -385,12 +382,12 @@ public class InMemoryTaskManager implements TaskManager {
         Epic epic = epics.get(indexEpic);
         ArrayList<Subtask> subtaskArrayList = new ArrayList<>();
 
-        if (epic != null){
+        if (epic != null) {
             Subtask subtask;
             for (Integer id : epic.getSubTasks()) {
                 subtask = subtaskArrayList.get(id);
 
-                if (subtask != null){
+                if (subtask != null) {
                     subtaskArrayList.add(subtask);
                 }
             }
@@ -399,7 +396,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getHistory(){
+    public List<Task> getHistory() {
         return new ArrayList<>(historyManager.getHistory());
     }
 }
