@@ -18,13 +18,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic{" +
-                "subTasks=" + subTasks +
-                ", id=" + getId() +
-                ", description='" + getDescription() + '\'' +
-                ", status=" + getStatus() +
-                ", name='" + getName() + '\'' +
-                '}';
+        return "Epic{" + "subTasks=" + subTasks + ", id=" + getId() + ", description='" + getDescription() + '\'' + ", status=" + getStatus() + ", name='" + getName() + '\'' + '}';
     }
 
     public List<Integer> getSubTasks() {
@@ -41,7 +35,7 @@ public class Epic extends Task {
     }
 
     public void removeSubTask(int id) {
-        subTasks.remove(id);
+        subTasks.remove(Integer.valueOf(id));
     }
 
     public void cleanSubTasks() {
