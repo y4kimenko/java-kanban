@@ -62,7 +62,7 @@ public class InMemoryTaskManager implements TaskManager {
             recalculateEpicStatus(epic);
         }
 
-        historyManager.remove(removed.getId()); // Удаление из истории
+        historyManager.remove(subtaskId); // Удаление из истории
 
         return true;
 
@@ -72,17 +72,22 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean removeEpicById(int epicId) {
         Epic removed = epics.remove(epicId);
 
-        historyManager.remove(removed.getId()); // Удаление из истории
+        if (removed == null) return false;
 
-        if (removed != null) {
-            for (Integer subtaskId : removed.getSubTasks()) {
-                subtasks.remove(subtaskId);
-            }
 
-            return true;
-        } else {
-            return false;
+        historyManager.remove(removed.getId()); // Удаление из истории epic
+
+        for (Integer subtaskId : removed.getSubTasks()) {   // Удаление из истории subtask epic's
+            historyManager.remove(subtaskId);
         }
+
+
+        for (Integer subtaskId : removed.getSubTasks()) {   // Удаление subtask
+                subtasks.remove(subtaskId);
+        }
+
+        return true;
+
     }
 
 
@@ -116,8 +121,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllTasks() {
-        for (Task task : tasks.values()) { // Удаление истории
-            historyManager.remove(task.getId());
+        for (Integer taskId : tasks.keySet()) { // Удаление истории
+            historyManager.remove(taskId);
         }
 
         tasks.clear();

@@ -43,20 +43,18 @@ public class InMemoryHistoryManager implements HistoryManager {
             removeNode(existing);
         }
 
-        Node node = new Node(task);   // создаём новый просмотр
-        linkLast(node);
-        history.put(task.getId(), node);
+        history.put(task.getId(), linkLast(new Node(task))); // создаём новый просмотр
     }
 
     @Override
     public void remove(int id) {
-        removeNode(history.get(id));
-        history.remove(id);
+        removeNode(history.remove(id));
     }
 
     // ============ Вспомогательные методы ===============
-    private void linkLast(Node node) {
-        if (!Objects.isNull(node)) {
+    private Node linkLast(Node node) {
+
+        if (node != null) {
             if (tail == null) {
                 head = tail = node;
             } else {
@@ -65,14 +63,14 @@ public class InMemoryHistoryManager implements HistoryManager {
                 tail = node;
             }
         }
+        return node;
     }
 
     private void removeNode(Node removeNode) {
         if (Objects.isNull(removeNode)) return;
         if (Objects.isNull(head)) return;
-        if (history.containsValue(removeNode)) {
-            history.remove(removeNode.task.getId());
 
+        if (history.containsValue(removeNode)) {
             if (removeNode.prev != null) {
                 removeNode.prev.next = removeNode.next;
             } else {
