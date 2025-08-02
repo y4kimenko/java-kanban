@@ -58,6 +58,8 @@ public interface TaskManager {
 
     Subtask updateSubtask(Subtask updatedSubtask);
 
+
+
     ArrayList<Subtask> getSubtaskByIndexEpic(int indexEpic);
 
     List<Task> getHistory();

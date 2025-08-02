@@ -1,4 +1,9 @@
 package main.exception;
 
-public class ManagerSaveException {
+public class ManagerSaveException extends RuntimeException{
+
+    public ManagerSaveException(String message) {
+        super(message);
+    }
+
 }
