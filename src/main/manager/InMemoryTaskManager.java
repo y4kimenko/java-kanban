@@ -11,14 +11,15 @@ import java.util.List;
 
 
 public class InMemoryTaskManager implements TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, Epic> epics = new HashMap<>();
-    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    protected final HashMap<Integer, Task> tasks = new HashMap<>();
+    protected final HashMap<Integer, Epic> epics = new HashMap<>();
+    protected final HashMap<Integer, Subtask> subtasks = new HashMap<>();
 
-    private final HistoryManager historyManager = Managers.getDefaultHistoryManager();
+    protected final HistoryManager historyManager = Managers.getDefaultHistoryManager();
 
 
-    private int generatedId = 1;
+    protected int generatedId = 1;
+
 
     // ==================== вывод списков ==============================
     @Override
@@ -53,8 +54,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
 
-
-
         // удаление из списка связанного epic
         Epic epic = epics.get(removed.getEpicId());
         if (epic != null) {
@@ -83,7 +82,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
         for (Integer subtaskId : removed.getSubTasks()) {   // Удаление subtask
-                subtasks.remove(subtaskId);
+            subtasks.remove(subtaskId);
         }
 
         return true;
