@@ -54,8 +54,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
 
-
-
         // удаление из списка связанного epic
         Epic epic = epics.get(removed.getEpicId());
         if (epic != null) {
@@ -84,7 +82,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 
         for (Integer subtaskId : removed.getSubTasks()) {   // Удаление subtask
-                subtasks.remove(subtaskId);
+            subtasks.remove(subtaskId);
         }
 
         return true;

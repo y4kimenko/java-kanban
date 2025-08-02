@@ -18,15 +18,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             fileWriter.write("id,type,name,status,description,epic\n");
             fileWriter.newLine();
 
-            for (Task task: super.tasks.values()) {
+            for (Task task : super.tasks.values()) {
                 fileWriter.write(toString(task));
                 fileWriter.newLine();
             }
-            for (Epic epic: super.epics.values()) {
+            for (Epic epic : super.epics.values()) {
                 fileWriter.write(toString(epic));
                 fileWriter.newLine();
             }
-            for (Subtask subtask: super.subtasks.values()) {
+            for (Subtask subtask : super.subtasks.values()) {
                 fileWriter.write(toString(subtask));
                 fileWriter.newLine();
             }
@@ -36,7 +36,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     }
 
-    protected static FileBackedTaskManager loadFromFile (File file) {
+    protected static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
 
         try (FileReader reader = new FileReader(file); BufferedReader br = new BufferedReader(reader)) {
@@ -56,12 +56,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String[] split = value.split(",");
 
         task = switch (TypeTask.valueOf(split[1])) {
-            case TypeTask.TASK -> super.createTaskWithID(new Task(split[2], split[4], StatusTask.valueOf(split[3])), Integer.parseInt(split[0]));
+            case TypeTask.TASK ->
+                    super.createTaskWithID(new Task(split[2], split[4], StatusTask.valueOf(split[3])), Integer.parseInt(split[0]));
             case TypeTask.EPIC -> super.createEpicWithID(new Epic(split[2], split[4]), Integer.parseInt(split[0]));
-            case TypeTask.SUBTASK -> super.createSubtaskWithID(new Subtask(split[2], split[4], StatusTask.valueOf(split[3]), Integer.parseInt(split[5])), Integer.parseInt(split[0]));
+            case TypeTask.SUBTASK ->
+                    super.createSubtaskWithID(new Subtask(split[2], split[4], StatusTask.valueOf(split[3]), Integer.parseInt(split[5])), Integer.parseInt(split[0]));
         };
 
-        if (Integer.parseInt(split[0]) > super.generatedId){
+        if (Integer.parseInt(split[0]) > super.generatedId) {
             generatedId = Integer.parseInt(split[0]);
         }
         return task;
@@ -81,7 +83,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         builder.append(task.getStatus()).append(",");
         builder.append(task.getDescription()).append(",");
 
-        if (task instanceof Subtask){
+        if (task instanceof Subtask) {
             builder.append(((Subtask) task).getEpicId());
         }
 
@@ -90,21 +92,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // ======================= Удаление по идентификатору =======================
     @Override
-    public boolean removeTaskById(int taskId){
+    public boolean removeTaskById(int taskId) {
         boolean result = super.removeTaskById(taskId);
         save();
         return result;
     }
 
     @Override
-    public boolean removeSubtaskById(int subtaskId){
+    public boolean removeSubtaskById(int subtaskId) {
         boolean result = super.removeSubtaskById(subtaskId);
         save();
         return result;
     }
 
     @Override
-    public boolean removeEpicById(int epicId){
+    public boolean removeEpicById(int epicId) {
         boolean result = super.removeEpicById(epicId);
         save();
         return result;
@@ -112,26 +114,26 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // ======================= Удаление всех задач =======================
     @Override
-    public void removeAllTasks(){
+    public void removeAllTasks() {
         super.removeAllTasks();
         save();
     }
 
     @Override
-    public void removeAllEpics(){
+    public void removeAllEpics() {
         super.removeAllEpics();
         save();
     }
 
     @Override
-    public void removeAllSubtasks(){
+    public void removeAllSubtasks() {
         super.removeAllSubtasks();
         save();
     }
 
     // ======================= Методы создания и обновления =======================
     @Override
-    public Task createTask(Task task){
+    public Task createTask(Task task) {
         Task returnTask = super.createTask(task);
         save();
         return returnTask;
