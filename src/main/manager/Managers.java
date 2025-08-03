@@ -15,6 +15,6 @@ public final class Managers {
     }
 
     public static FileBackedTaskManager getDefaultFileBackedTaskManager() {
-        return FileBackedTaskManager.loadFromFile(new File("D:\\practicum\\проект\\resources\\package.csv"));
+        return FileBackedTaskManager.loadFromFile(new File("\\resources\\package.csv"));
     }
 }

@@ -31,6 +31,11 @@ public class Epic extends Task {
         return new ArrayList<>(subTasks);
     }
 
+    @Override
+    public TypeTask getTypeTask() {
+        return TypeTask.EPIC;
+    }
+
     // ----------------------- методы связанные SubTask ------------------------------------
     public Boolean addSubTask(int id) {
         if (!subTasks.contains(id)) {

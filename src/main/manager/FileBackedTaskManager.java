@@ -74,16 +74,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         builder.append(task.getId()).append(",");
 
-        switch (task) {
-            case Epic epic -> builder.append(TypeTask.EPIC.name()).append(",");
-            case Subtask subtask -> builder.append(TypeTask.SUBTASK.name()).append(",");
-            case Task task1 -> builder.append(TypeTask.TASK.name()).append(",");
+        switch (task.getTypeTask()) {
+            case TypeTask.EPIC -> builder.append(TypeTask.EPIC.name()).append(",");
+            case TypeTask.SUBTASK -> builder.append(TypeTask.SUBTASK.name()).append(",");
+            case TypeTask.TASK -> builder.append(TypeTask.TASK.name()).append(",");
         }
         builder.append(task.getName()).append(",");
         builder.append(task.getStatus()).append(",");
         builder.append(task.getDescription()).append(",");
 
-        if (task instanceof Subtask) {
+        if (task.getTypeTask() == TypeTask.SUBTASK) {
             builder.append(((Subtask) task).getEpicId());
         }
 
