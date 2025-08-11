@@ -2,6 +2,7 @@ package main.manager;
 
 import main.tasks.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -307,26 +308,56 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected void recalcEpic(Epic epic) {
-        // Использую список ИД подзадач эпика — эффективно
+        // Собираем подзадачи эпика по его списку id
         List<Subtask> list = epic.getSubTasks().stream()
                 .map(subtasks::get)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        // статус эпика
-        boolean allNew = list.stream().allMatch(s -> s.getStatus() == StatusTask.NEW);
-        boolean allDone = !list.isEmpty() && list.stream().allMatch(s -> s.getStatus() == StatusTask.DONE);
-        if (list.isEmpty() || allNew) {
+        // --- Статус ---
+        if (list.isEmpty()) {
             epic.setStatus(StatusTask.NEW);
-        } else if (allDone) {
+            epic.setStartTime(null);
+            epic.setDuration(null);
+            epic.setEndTime(null);
+            return;
+        }
+
+        boolean allNew  = list.stream().allMatch(s -> s.getStatus() == StatusTask.NEW);
+        boolean allDone = list.stream().allMatch(s -> s.getStatus() == StatusTask.DONE);
+        if (allDone) {
             epic.setStatus(StatusTask.DONE);
+        } else if (allNew) {
+            epic.setStatus(StatusTask.NEW);
         } else {
             epic.setStatus(StatusTask.IN_PROGRESS);
         }
 
-        // временные поля
-        recalcEpic(epic);
+        // --- Время ---
+        // duration = сумма, если у кого-то duration задана, иначе null
+        boolean anyDuration = list.stream().anyMatch(s -> s.getDuration() != null);
+        Duration total = list.stream()
+                .map(Subtask::getDuration)
+                .filter(Objects::nonNull)
+                .reduce(Duration.ZERO, Duration::plus);
+        epic.setDuration(anyDuration ? total : null);
+
+        // startTime = минимум по startTime, endTime = максимум по endTime; если нигде не задано — null
+        LocalDateTime start = list.stream()
+                .map(Subtask::getStartTime)
+                .filter(Objects::nonNull)
+                .min(Comparator.naturalOrder())
+                .orElse(null);
+        epic.setStartTime(start);
+
+        LocalDateTime end = list.stream()
+                .map(Subtask::getEndTime)
+                .filter(Objects::nonNull)
+                .max(Comparator.naturalOrder())
+                .orElse(null);
+        epic.setEndTime(end);
     }
+
 
     // ==================== связи ====================
     @Override

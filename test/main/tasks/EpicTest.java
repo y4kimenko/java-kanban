@@ -1,41 +1,47 @@
 package main.tasks;
 
+import main.manager.InMemoryTaskManager;
+import main.manager.TaskManager;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
 
     @Test
     void statusCalculated_fromSubtasks_allNew() {
-        Epic epic = new Epic("Release", "");
-        // Здесь моделируем пересчёт временных полей внутри Epic:
+        TaskManager manager = new InMemoryTaskManager();
+
+        Epic epic = manager.createEpic(new Epic("Release", ""));
         Subtask s1 = new Subtask("S1", "", StatusTask.NEW,
                 LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(10), epic.getId());
         Subtask s2 = new Subtask("S2", "", StatusTask.NEW,
                 LocalDateTime.parse("2025-08-11T12:00"), Duration.ofMinutes(20), epic.getId());
 
-        epic.recalcFromSubtasks(List.of(s1, s2));
+        manager.createSubtask(s1);
+        manager.createSubtask(s2);
 
-        assertEquals(LocalDateTime.parse("2025-08-11T10:00"), epic.getStartTime());
-        assertEquals(LocalDateTime.parse("2025-08-11T12:20"), epic.getEndTime());
-        assertEquals(Duration.ofMinutes(30), epic.getDuration());
+        Epic actual = manager.searchEpicById(epic.getId());
+
+        assertEquals(LocalDateTime.parse("2025-08-11T10:00"), actual.getStartTime());
+        assertEquals(LocalDateTime.parse("2025-08-11T12:20"), actual.getEndTime());
+        assertEquals(Duration.ofMinutes(30), actual.getDuration());
     }
 
     @Test
     void timesCleared_whenNoSubtasks() {
-        Epic epic = new Epic("Empty", "");
+        TaskManager manager = new InMemoryTaskManager();
 
-        epic.recalcFromSubtasks(List.of());
+        Epic epic = manager.createEpic(new Epic("Empty", ""));
+        Epic actual = manager.searchEpicById(epic.getId());
 
-        assertNull(epic.getStartTime());
-        assertNull(epic.getEndTime());
-        assertNull(epic.getDuration());
+        // у эпика без подзадач временные поля должны быть null
+        assertNull(actual.getStartTime());
+        assertNull(actual.getEndTime());
+        assertNull(actual.getDuration());
     }
 
     @Test
