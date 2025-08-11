@@ -10,6 +10,10 @@ import java.time.LocalDateTime;
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File file;
 
+    // Константы заголовка CSV
+    public static final String CSV_HEADER =
+            "id,type,name,status,description,epicId,startTime,durationMinutes";
+
     private FileBackedTaskManager(File file) {
         super();
         this.file = file;
@@ -19,7 +23,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         if (!file.exists()) {
             try (FileWriter writer = new FileWriter(file)) {
-                writer.write("id,type,name,status,description,epicId,startTime,durationMinutes\n");
+                writer.write(CSV_HEADER + "\n");
             } catch (IOException ignored) {
             }
             return manager;
@@ -39,7 +43,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (FileWriter writer = new FileWriter(file)) {
-            writer.write("id,type,name,status,description,epicId,startTime,durationMinutes\n");
+            writer.write(CSV_HEADER + "\n");
             for (Task task : tasks.values()) {
                 writer.write(toString(task));
                 writer.write('\n');
@@ -88,7 +92,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
             case EPIC -> {
                 Epic e = new Epic(name, description);
-                e.setStatus(StatusTask.valueOf(statusStr)); // при загрузке допустимо
+                e.setStatus(StatusTask.valueOf(statusStr)); // статус будет пересчитан при добавлении сабтасков
                 result = super.createEpicWithID(e, id);
             }
             case SUBTASK -> {
