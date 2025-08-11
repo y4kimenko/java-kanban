@@ -1,6 +1,5 @@
 package main.manager;
 
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -8,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ManagersTest {
     @Test
     void testTaskManagerIsAlwaysInitialized() {
-        TaskManager manager = Managers.getDefaultTaskManager();
+        TaskManager manager = Managers.getDefault();
         assertEquals(InMemoryTaskManager.class, manager.getClass());
     }
 

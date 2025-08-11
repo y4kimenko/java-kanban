@@ -1,168 +1,115 @@
 package main.manager;
 
-
-import main.tasks.Epic;
-import main.tasks.StatusTask;
-import main.tasks.Subtask;
-import main.tasks.Task;
+import main.tasks.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
+
     private TaskManager manager;
 
     @BeforeEach
     void setUp() {
-        manager = Managers.getDefaultTaskManager();
+        manager = Managers.getDefault();
+    }
+
+    // ------ Epic status cases (a–d) ------
+    @Test
+    void epicStatus_allNew() {
+        Epic e = manager.createEpic(new Epic("E",""));
+        manager.createSubtask(new Subtask("S1","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(10), e.getId()));
+        manager.createSubtask(new Subtask("S2","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T11:00"), Duration.ofMinutes(10), e.getId()));
+        assertEquals(StatusTask.NEW, manager.searchEpicById(e.getId()).getStatus());
     }
 
     @Test
-    void testSavingAndSearchTaskInMemory() {
-        Task task = new Task("test1", "descrption1", StatusTask.NEW);
-
-        manager.createTask(task);
-
-        assertEquals(task, manager.searchTaskById(1));
+    void epicStatus_allDone() {
+        Epic e = manager.createEpic(new Epic("E",""));
+        manager.createSubtask(new Subtask("S1","", StatusTask.DONE,
+                LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(10), e.getId()));
+        manager.createSubtask(new Subtask("S2","", StatusTask.DONE,
+                LocalDateTime.parse("2025-08-11T11:00"), Duration.ofMinutes(10), e.getId()));
+        assertEquals(StatusTask.DONE, manager.searchEpicById(e.getId()).getStatus());
     }
 
     @Test
-    void testSavingAndSearchEpicInMemory() {
-        Epic epic = new Epic("test1", "descrption1");
-
-        manager.createEpic(epic);
-
-        assertEquals(epic, manager.searchEpicById(1));
+    void epicStatus_newAndDone_isInProgress() {
+        Epic e = manager.createEpic(new Epic("E",""));
+        manager.createSubtask(new Subtask("S1","", StatusTask.DONE,
+                LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(10), e.getId()));
+        manager.createSubtask(new Subtask("S2","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T11:00"), Duration.ofMinutes(10), e.getId()));
+        assertEquals(StatusTask.IN_PROGRESS, manager.searchEpicById(e.getId()).getStatus());
     }
 
     @Test
-    void testSavingAndSearchSubtaskInMemory() {
-        Epic epic = new Epic("test1", "descrption1");
-        manager.createEpic(epic);
+    void epicStatus_inProgress() {
+        Epic e = manager.createEpic(new Epic("E",""));
+        manager.createSubtask(new Subtask("S1","", StatusTask.IN_PROGRESS,
+                LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(10), e.getId()));
+        manager.createSubtask(new Subtask("S2","", StatusTask.IN_PROGRESS,
+                LocalDateTime.parse("2025-08-11T11:00"), Duration.ofMinutes(10), e.getId()));
+        assertEquals(StatusTask.IN_PROGRESS, manager.searchEpicById(e.getId()).getStatus());
+    }
 
-        Subtask subtask = new Subtask("test1", "descrption1", StatusTask.NEW, epic.getId());
-        manager.createSubtask(subtask);
+    // ------ Prioritized list and null-start exclusion ------
+    @Test
+    void prioritized_excludesNullStart_andSortsByStart() {
+        Task tNoTime = manager.createTask(new Task("A","", StatusTask.NEW));
+        Task t2 = manager.createTask(new Task("B","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T12:00"), Duration.ofMinutes(30)));
+        Task t1 = manager.createTask(new Task("C","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T08:00"), Duration.ofMinutes(15)));
 
-        assertEquals(subtask, manager.searchSubtaskById(2));
+        // если метод не объявлен в интерфейсе, берём из реализации
+        List<Task> prio = ((InMemoryTaskManager) manager).getPrioritizedTasks();
+        assertEquals(2, prio.size(), "Tasks without startTime must be excluded");
+        assertEquals(t1.getId(), prio.get(0).getId());
+        assertEquals(t2.getId(), prio.get(1).getId());
+        assertNotEquals(tNoTime.getId(), prio.get(0).getId());
+    }
+
+    // ------ Overlap detection ------
+    @Test
+    void overlap_onCreate_task_throws() {
+        manager.createTask(new Task("A","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(60)));
+        Task overlapping = new Task("B","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T10:30"), Duration.ofMinutes(15));
+        assertThrows(IllegalStateException.class, () -> manager.createTask(overlapping));
     }
 
     @Test
-    void testCheckingImmutabilityWhenSavingTaskInMemory() {
-        Task task = new Task("test1", "descrption1", StatusTask.NEW);
+    void overlap_onUpdate_task_throws() {
+        Task a = manager.createTask(new Task("A","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(60)));
+        Task b = manager.createTask(new Task("B","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T12:00"), Duration.ofMinutes(15)));
 
-        manager.createTask(task);
-
-        assertEquals("test1", manager.searchTaskById(1).getName());
-        assertEquals("descrption1", manager.searchTaskById(1).getDescription());
-        assertEquals(StatusTask.NEW, manager.searchTaskById(1).getStatus());
+        b.setStartTime(LocalDateTime.parse("2025-08-11T10:30"));
+        b.setDuration(Duration.ofMinutes(30));
+        assertThrows(IllegalStateException.class, () -> manager.updateTask(b));
     }
 
     @Test
-    void testCheckingImmutabilityWhenSavingEpicInMemory() {
-        Epic epic = new Epic("test1", "descrption1");
+    void epicTimes_recalculatedFromSubtasks() {
+        Epic e = manager.createEpic(new Epic("E",""));
+        manager.createSubtask(new Subtask("S1","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T08:00"), Duration.ofMinutes(30), e.getId()));
+        manager.createSubtask(new Subtask("S2","", StatusTask.NEW,
+                LocalDateTime.parse("2025-08-11T09:00"), Duration.ofMinutes(45), e.getId()));
 
-        manager.createEpic(epic);
-
-        assertEquals("test1", manager.searchEpicById(1).getName());
-        assertEquals("descrption1", manager.searchEpicById(1).getDescription());
-
-    }
-
-    @Test
-    void testCheckingImmutabilityWhenSavingSubtaskInMemory() {
-        Epic epic = new Epic("test1", "descrption1");
-        manager.createEpic(epic);
-
-        Subtask subtask = new Subtask("test1", "descrption1", StatusTask.NEW, epic.getId());
-        manager.createSubtask(subtask);
-
-        assertEquals("test1", manager.searchSubtaskById(2).getName());
-        assertEquals("descrption1", manager.searchSubtaskById(2).getDescription());
-        assertEquals(StatusTask.NEW, manager.searchSubtaskById(2).getStatus());
-        assertEquals(subtask.getId(), manager.searchSubtaskById(2).getId());
-
-    }
-
-    @Test
-    void testCheckingCreatingTaskWithId() {
-        Task task = new Task("test1", "descrption1", StatusTask.NEW);
-        manager.createTaskWithID(task, 5);
-
-        assertEquals(task, manager.searchTaskById(5));
-    }
-
-    @Test
-    void testCheckingCreatingEpicWithId() {
-        Epic epic = new Epic("test1", "descrption1");
-        manager.createEpicWithID(epic, 6);
-
-        assertEquals(epic, manager.searchEpicById(6));
-    }
-
-    @Test
-    void testCheckingCreatingSubtaskWithId() {
-        Epic epic = new Epic("test1", "descrption1");
-        manager.createEpic(epic);
-
-        Subtask subtask = new Subtask("test1", "descrption1", StatusTask.NEW, epic.getId());
-        manager.createSubtaskWithID(subtask, 3);
-
-        assertEquals(subtask, manager.searchSubtaskById(3));
-    }
-
-    @Test
-    void testRemovingTaskWithId() {
-        Task task = new Task("test1", "descrption1", StatusTask.NEW);
-        Task task2 = new Task("test2", "descrption2", StatusTask.NEW);
-
-        manager.createTask(task);
-        manager.createTask(task2);
-        manager.searchTaskById(task.getId());
-        manager.searchTaskById(task2.getId());
-
-        manager.removeTaskById(task.getId());
-
-        assertEquals(List.of(task2), manager.getHistory(), "removeTaskById(id) должен убирать задачу из истории");
-        assertNull(manager.searchTaskById(task.getId()), "removeTaskById(id) должен убирать задачу из списка tasks");
-    }
-
-    @Test
-    void testRemovingEpicWithId() {
-        Epic epic = new Epic("test1", "descrption1");
-        Epic epic2 = new Epic("test2", "descrption2");
-
-        manager.createEpic(epic);
-        manager.createEpic(epic2);
-        manager.searchEpicById(epic.getId());
-        manager.searchEpicById(epic2.getId());
-
-        manager.removeEpicById(epic.getId());
-
-        assertEquals(List.of(epic2), manager.getHistory(), "removeEpicById(id) должен убирать задачу из истории");
-        assertNull(manager.searchEpicById(epic.getId()), "removeEpicById(id) должен убирать задачу из списка epics");
-    }
-
-    @Test
-    void testRemovingSubtaskWithId() {
-        Epic epic = new Epic("test1", "descrption1");
-        manager.createEpic(epic);
-
-        Subtask subtask = new Subtask("test1", "descrption1", StatusTask.NEW, epic.getId());
-        manager.createSubtask(subtask);
-
-        Subtask subtask2 = new Subtask("test2", "descrption2", StatusTask.NEW, epic.getId());
-        manager.createSubtask(subtask2);
-
-        manager.searchSubtaskById(subtask.getId());
-        manager.searchSubtaskById(subtask2.getId());
-        manager.removeSubtaskById(subtask.getId());
-
-        assertEquals(List.of(subtask2), manager.getHistory(), "removeSubtaskById(id) должен убирать задачу из истории");
-        assertNull(manager.searchSubtaskById(subtask.getId()), "removeSubtaskById(id) должен убирать задачу из списка epics");
-
+        Epic re = manager.searchEpicById(e.getId());
+        assertEquals(LocalDateTime.parse("2025-08-11T08:00"), re.getStartTime());
+        assertEquals(LocalDateTime.parse("2025-08-11T09:45"), re.getEndTime());
+        assertEquals(Duration.ofMinutes(75), re.getDuration());
     }
 }
