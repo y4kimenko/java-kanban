@@ -1,7 +1,10 @@
 package main.manager;
 
 import main.exception.ManagerSaveException;
-import main.tasks.*;
+import main.tasks.Epic;
+import main.tasks.StatusTask;
+import main.tasks.Subtask;
+import main.tasks.Task;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -24,10 +27,10 @@ class FileBackedTaskManagerTest {
         File file = tempDir.resolve("tasks.csv").toFile();
         FileBackedTaskManager m1 = FileBackedTaskManager.loadFromFile(file);
 
-        Epic e = m1.createEpic(new Epic("E",""));
-        Task t = m1.createTask(new Task("T","", StatusTask.NEW,
+        Epic e = m1.createEpic(new Epic("E", ""));
+        Task t = m1.createTask(new Task("T", "", StatusTask.NEW,
                 LocalDateTime.parse("2025-08-11T09:00"), Duration.ofMinutes(30)));
-        Subtask s = m1.createSubtask(new Subtask("S","", StatusTask.NEW,
+        Subtask s = m1.createSubtask(new Subtask("S", "", StatusTask.NEW,
                 LocalDateTime.parse("2025-08-11T08:00"), Duration.ofMinutes(15), e.getId()));
 
         // reload

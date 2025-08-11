@@ -20,7 +20,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         if (!file.exists()) {
             try (FileWriter writer = new FileWriter(file)) {
                 writer.write("id,type,name,status,description,epicId,startTime,durationMinutes\n");
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
             return manager;
         }
 
@@ -134,33 +135,104 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // ===== персист-оверрайды =====
     @Override
-    public Task createTask(Task task) { Task t = super.createTask(task); save(); return t; }
+    public Task createTask(Task task) {
+        Task t = super.createTask(task);
+        save();
+        return t;
+    }
+
     @Override
-    public Task createTaskWithID(Task task, int id) { Task t = super.createTaskWithID(task, id); save(); return t; }
+    public Task createTaskWithID(Task task, int id) {
+        Task t = super.createTaskWithID(task, id);
+        save();
+        return t;
+    }
+
     @Override
-    public Task updateTask(Task updatedTask) { Task t = super.updateTask(updatedTask); save(); return t; }
+    public Task updateTask(Task updatedTask) {
+        Task t = super.updateTask(updatedTask);
+        save();
+        return t;
+    }
+
     @Override
-    public Epic createEpic(Epic epic) { Epic e = super.createEpic(epic); save(); return e; }
+    public Epic createEpic(Epic epic) {
+        Epic e = super.createEpic(epic);
+        save();
+        return e;
+    }
+
     @Override
-    public Epic createEpicWithID(Epic epic, int id) { Epic e = super.createEpicWithID(epic, id); save(); return e; }
+    public Epic createEpicWithID(Epic epic, int id) {
+        Epic e = super.createEpicWithID(epic, id);
+        save();
+        return e;
+    }
+
     @Override
-    public Epic updateEpic(Epic updatedEpic) { Epic e = super.updateEpic(updatedEpic); save(); return e; }
+    public Epic updateEpic(Epic updatedEpic) {
+        Epic e = super.updateEpic(updatedEpic);
+        save();
+        return e;
+    }
+
     @Override
-    public boolean removeTaskById(int taskId) { boolean ok = super.removeTaskById(taskId); save(); return ok; }
+    public boolean removeTaskById(int taskId) {
+        boolean ok = super.removeTaskById(taskId);
+        save();
+        return ok;
+    }
+
     @Override
-    public boolean removeSubtaskById(int subtaskId) { boolean ok = super.removeSubtaskById(subtaskId); save(); return ok; }
+    public boolean removeSubtaskById(int subtaskId) {
+        boolean ok = super.removeSubtaskById(subtaskId);
+        save();
+        return ok;
+    }
+
     @Override
-    public boolean removeEpicById(int epicId) { boolean ok = super.removeEpicById(epicId); save(); return ok; }
+    public boolean removeEpicById(int epicId) {
+        boolean ok = super.removeEpicById(epicId);
+        save();
+        return ok;
+    }
+
     @Override
-    public void removeAllTasks() { super.removeAllTasks(); save(); }
+    public void removeAllTasks() {
+        super.removeAllTasks();
+        save();
+    }
+
     @Override
-    public void removeAllEpics() { super.removeAllEpics(); save(); }
+    public void removeAllEpics() {
+        super.removeAllEpics();
+        save();
+    }
+
     @Override
-    public void removeAllSubtasks() { super.removeAllSubtasks(); save(); }
+    public void removeAllSubtasks() {
+        super.removeAllSubtasks();
+        save();
+    }
+
     @Override
-    public Subtask createSubtask(Subtask subtask) { Subtask s = super.createSubtask(subtask); save(); return s; }
+    public Subtask createSubtask(Subtask subtask) {
+        Subtask s = super.createSubtask(subtask);
+        save();
+        return s;
+    }
+
     @Override
-    public Subtask createSubtaskWithID(Subtask subtask, int id) { Subtask s = super.createSubtaskWithID(subtask, id); save(); return s; }
+    public Subtask createSubtaskWithID(Subtask subtask, int id) {
+        Subtask s = super.createSubtaskWithID(subtask, id);
+        save();
+        return s;
+    }
+
     @Override
-    public Subtask updateSubtask(Subtask updatedSubtask) { Subtask s = super.updateSubtask(updatedSubtask); save(); return s; }
+    public Subtask updateSubtask(Subtask updatedSubtask) {
+        Subtask s = super.updateSubtask(updatedSubtask);
+        save();
+        return s;
+    }
 }

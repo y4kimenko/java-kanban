@@ -62,13 +62,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     // ==================== вывод ====================
     @Override
-    public void printAllTasks() { System.out.println(tasks.values()); }
+    public void printAllTasks() {
+        System.out.println(tasks.values());
+    }
 
     @Override
-    public void printAllEpics() { System.out.println(epics.values()); }
+    public void printAllEpics() {
+        System.out.println(epics.values());
+    }
 
     @Override
-    public void printAllSubtasks() { System.out.println(subtasks.values()); }
+    public void printAllSubtasks() {
+        System.out.println(subtasks.values());
+    }
 
     // ==================== удаление по id ====================
     @Override
@@ -293,7 +299,9 @@ public class InMemoryTaskManager implements TaskManager {
         return updatedSubtask;
     }
 
-    private int generateId() { return generatedId++; }
+    private int generateId() {
+        return generatedId++;
+    }
 
     protected void recalcEpic(Epic epic) {
         List<Subtask> list = epic.getSubTasks().stream()

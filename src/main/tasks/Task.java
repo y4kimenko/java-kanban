@@ -43,25 +43,57 @@ public class Task {
         return startTime.plus(duration);
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getName() {
+        return name;
+    }
 
-    public StatusTask getStatus() { return status; }
-    public void setStatus(StatusTask status) { this.status = status; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Duration getDuration() { return duration; }
-    public void setDuration(Duration duration) { this.duration = duration; }
+    public String getDescription() {
+        return description;
+    }
 
-    public LocalDateTime getStartTime() { return startTime; }
-    public void setStartTime(LocalDateTime startTime) { this.startTime = startTime; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public TypeTask getTypeTask() { return TypeTask.TASK; }
+    public StatusTask getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusTask status) {
+        this.status = status;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public TypeTask getTypeTask() {
+        return TypeTask.TASK;
+    }
 
     @Override
     public boolean equals(Object o) {

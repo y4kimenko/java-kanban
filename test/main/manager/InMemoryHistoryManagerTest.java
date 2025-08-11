@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InMemoryHistoryManagerTest {
 
@@ -20,8 +21,10 @@ class InMemoryHistoryManagerTest {
     @Test
     void deduplicate() {
         HistoryManager history = Managers.getDefaultHistoryManager();
-        Task t1 = new Task("A","", StatusTask.NEW); t1.setId(1);
-        Task t2 = new Task("B","", StatusTask.NEW); t2.setId(2);
+        Task t1 = new Task("A", "", StatusTask.NEW);
+        t1.setId(1);
+        Task t2 = new Task("B", "", StatusTask.NEW);
+        t2.setId(2);
 
         history.add(t1);
         history.add(t2);
@@ -37,11 +40,16 @@ class InMemoryHistoryManagerTest {
     @Test
     void removeHeadMiddleTail() {
         HistoryManager history = Managers.getDefaultHistoryManager();
-        Task t1 = new Task("A","", StatusTask.NEW); t1.setId(1);
-        Task t2 = new Task("B","", StatusTask.NEW); t2.setId(2);
-        Task t3 = new Task("C","", StatusTask.NEW); t3.setId(3);
+        Task t1 = new Task("A", "", StatusTask.NEW);
+        t1.setId(1);
+        Task t2 = new Task("B", "", StatusTask.NEW);
+        t2.setId(2);
+        Task t3 = new Task("C", "", StatusTask.NEW);
+        t3.setId(3);
 
-        history.add(t1); history.add(t2); history.add(t3);
+        history.add(t1);
+        history.add(t2);
+        history.add(t3);
 
         history.remove(1); // голова
         assertEquals(List.of(t2, t3), history.getHistory());

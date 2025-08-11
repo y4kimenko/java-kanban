@@ -6,7 +6,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class EpicTest {
 
@@ -14,9 +15,9 @@ class EpicTest {
     void statusCalculated_fromSubtasks_allNew() {
         Epic epic = new Epic("Release", "");
         // Здесь моделируем пересчёт временных полей внутри Epic:
-        Subtask s1 = new Subtask("S1","", StatusTask.NEW,
+        Subtask s1 = new Subtask("S1", "", StatusTask.NEW,
                 LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(10), epic.getId());
-        Subtask s2 = new Subtask("S2","", StatusTask.NEW,
+        Subtask s2 = new Subtask("S2", "", StatusTask.NEW,
                 LocalDateTime.parse("2025-08-11T12:00"), Duration.ofMinutes(20), epic.getId());
 
         epic.recalcFromSubtasks(List.of(s1, s2));
@@ -28,7 +29,7 @@ class EpicTest {
 
     @Test
     void timesCleared_whenNoSubtasks() {
-        Epic epic = new Epic("Empty","");
+        Epic epic = new Epic("Empty", "");
 
         epic.recalcFromSubtasks(List.of());
 

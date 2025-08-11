@@ -23,11 +23,21 @@ public class Epic extends Task {
         this.endTime = epic.endTime;
     }
 
-    public List<Integer> getSubTasks() { return subTasks; }
+    public List<Integer> getSubTasks() {
+        return subTasks;
+    }
 
-    public void addSubTask(int id) { subTasks.add(id); }
-    public void removeSubTask(int id) { subTasks.remove(Integer.valueOf(id)); }
-    public void cleanSubTasks() { subTasks.clear(); }
+    public void addSubTask(int id) {
+        subTasks.add(id);
+    }
+
+    public void removeSubTask(int id) {
+        subTasks.remove(Integer.valueOf(id));
+    }
+
+    public void cleanSubTasks() {
+        subTasks.clear();
+    }
 
     // Пересчёт временных полей по сабтаскам (вызов из менеджера)
     public void recalcFromSubtasks(List<Subtask> subtasksOfEpic) {
@@ -60,8 +70,12 @@ public class Epic extends Task {
     }
 
     @Override
-    public LocalDateTime getEndTime() { return endTime; }
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
 
     @Override
-    public TypeTask getTypeTask() { return TypeTask.EPIC; }
+    public TypeTask getTypeTask() {
+        return TypeTask.EPIC;
+    }
 }
