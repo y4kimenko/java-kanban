@@ -1,70 +1,47 @@
 package main.tasks;
 
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static main.managers.InMemoryTaskManager.formatter;
+
 public class Task {
+    protected String name;
+    protected String description;
+    protected int id;
+    protected StatusTask status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    private int id;
-    private String name;
-    private String description;
-    private StatusTask status;
 
-    // Sprint 8: время и длительность
-    private Duration duration;           // может быть null
-    private LocalDateTime startTime;     // может быть null
-
-    public Task(String name, String description, StatusTask status) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
-    }
-
-    public Task(String name, String description, StatusTask status,
-                LocalDateTime startTime, Duration duration) {
+    public Task(String name, String description, StatusTask status, int id) {
         this(name, description, status);
-        this.startTime = startTime;
-        this.duration = duration;
-    }
-
-    // копирующий конструктор
-    public Task(Task other) {
-        this.id = other.id;
-        this.name = other.name;
-        this.description = other.description;
-        this.status = other.status;
-        this.duration = other.duration;
-        this.startTime = other.startTime;
-    }
-
-    public LocalDateTime getEndTime() {
-        if (startTime == null || duration == null) return null;
-        return startTime.plus(duration);
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public Task(String name, String description) {
         this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Task(String name, String description, StatusTask status) {
+        this(name, description);
+        this.status = status;
+
+    }
+
+    public Task(String name, String description, StatusTask status, int id, Duration duration, LocalDateTime startTime) {
+        this(name, description, status, id);
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(String name, String description, StatusTask status, Duration duration, LocalDateTime startTime) {
+        this(name, description, status);
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     public StatusTask getStatus() {
@@ -75,6 +52,39 @@ public class Task {
         this.status = status;
     }
 
+    public String getName() {
+        return name;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public TypeTask getType() {
+        return TypeTask.TASK;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
     public Duration getDuration() {
         return duration;
     }
@@ -83,38 +93,53 @@ public class Task {
         this.duration = duration;
     }
 
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public TypeTask getTypeTask() {
-        return TypeTask.TASK;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Task task)) return false;
-        return id == task.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public boolean checkIntersection(Task task) {
+        if (this.getStartTime() == null || task.getStartTime() == null) {
+            return false;
+        } else if (this.getStartTime().equals(task.getStartTime()) || this.getEndTime().equals(task.getEndTime())) {
+            return true;
+        } else if (this.getStartTime().isBefore(task.getStartTime()) && this.getEndTime().isAfter(task.getStartTime())) {
+            return true;
+        } else if (this.getStartTime().isAfter(task.getStartTime()) && task.getEndTime().isAfter(this.getStartTime())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", status=" + status +
-                ", startTime=" + startTime +
-                ", duration=" + (duration == null ? null : duration.toMinutes()) +
-                '}';
+        if (duration != null && startTime != null) {
+            return '\n' +
+                    "Название задачи: " + name + '\n' +
+                    "Описание задачи: " + description + '\n' +
+                    "ID задачи: " + id + '\n' +
+                    "Статус задачи: " + status + '\n' +
+                    "Время старта выполнения задачи: " + startTime.format(formatter) + '\n' +
+                    "Время окончания выполнения задачи: " + getEndTime().format(formatter) + '\n' +
+                    "Продолжительность выполнения задачи: " + duration.toHours() + " ч. " + duration.toMinutesPart() +
+                    " мин." + '\n' + '\n';
+        } else {
+            return '\n' +
+                    "Название задачи: " + name + '\n' +
+                    "Описание задачи: " + description + '\n' +
+                    "ID задачи: " + id + '\n' +
+                    "Статус задачи: " + status + '\n' +
+                    '\n';
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id && Objects.equals(name, task.name) && Objects.equals(description, task.description) &&
+                status == task.status && Objects.equals(duration, task.duration) && Objects.equals(startTime,
+                task.startTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, id, status, duration, startTime);
     }
 }

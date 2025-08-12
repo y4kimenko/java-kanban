@@ -1,40 +1,41 @@
 package main.tasks;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Month;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TaskTest {
+    private Task task1;
+    private Task task2;
+    private Task task3;
 
-    @Test
-    void equalsById_onlyIdMatters() {
-        Task a = new Task("A", "", StatusTask.NEW);
-        a.setId(42);
-        Task b = new Task("B", "different", StatusTask.DONE,
-                LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(15));
-        b.setId(42);
-
-        assertEquals(a, b, "Tasks with the same id must be equal");
-        assertEquals(a.hashCode(), b.hashCode(), "hashCode must match when ids match");
+    @BeforeEach
+    void setUp() {
+        task1 = new Task("Переезд", "В новую квартиру", StatusTask.NEW, Duration.ofMinutes(240),
+                LocalDateTime.of(2025, Month.JULY, 11, 14, 40));
+        task2 = new Task("Переезд", "В новый дом", StatusTask.NEW, Duration.ofMinutes(20),
+                LocalDateTime.of(2025, Month.JULY, 11, 15, 50));
+        task3 = new Task("Переезд", "В новую квартиру", StatusTask.NEW, Duration.ofMinutes(240),
+                LocalDateTime.of(2025, Month.JULY, 11, 15, 40));
     }
 
     @Test
-    void endTime_isNullIfStartOrDurationMissing() {
-        Task noStart = new Task("A", "", StatusTask.NEW, null, Duration.ofMinutes(30));
-        Task noDuration = new Task("B", "", StatusTask.NEW, LocalDateTime.parse("2025-08-11T10:00"), null);
-        assertNull(noStart.getEndTime());
-        assertNull(noDuration.getEndTime());
+    void setUpEndTime() {
+        assertEquals(task1.getEndTime(), task1.startTime.plus(task1.duration));
     }
 
     @Test
-    void endTime_computedAsStartPlusDuration() {
-        LocalDateTime start = LocalDateTime.parse("2025-08-11T09:00");
-        Duration dur = Duration.ofMinutes(45);
-        Task t = new Task("A", "", StatusTask.NEW, start, dur);
-        assertEquals(start.plus(dur), t.getEndTime());
+    void equalsCheck() {
+        assertNotEquals(task1, task3);
+    }
+
+    @Test
+    void intersectionCheck() {
+        assertTrue(task2.checkIntersection(task3));
     }
 }
