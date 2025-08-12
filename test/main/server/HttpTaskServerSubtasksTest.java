@@ -107,6 +107,11 @@ class HttpTaskServerSubtasksTest {
         Subtask subtask = gson.fromJson(response1.body(), Subtask.class);
 
         assertEquals(taskManager.getSubtaskById(4), subtask);
+
+        System.out.println("r1 status = " + response1.statusCode());
+        System.out.println("r1 body   = " + response1.body());
+        System.out.println("r2 status = " + response2.statusCode());
+        System.out.println("r2 body   = " + response2.body());
         assertEquals(200, response1.statusCode());
         assertEquals(404, response2.statusCode());
     }

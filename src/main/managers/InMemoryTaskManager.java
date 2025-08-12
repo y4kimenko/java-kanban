@@ -53,14 +53,15 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskById(int id) {
-        try {
-            Task task = tasks.get(id);
-            historyManager.add(task);
-            return tasks.get(id);
-        } catch (Exception exp) {
-            throw new NotFoundException("Задача не найдена");
+        Task task = tasks.get(id);
+        if (task == null) {
+            throw new NotFoundException("Задача не найдена: id=" + id);
         }
+        historyManager.add(task);
+        return task;
     }
+
+
 
     @Override
     public void updateTask(Task task) throws AddTaskException {
@@ -126,13 +127,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic getEpicById(int id) {
-        try {
-            Epic epic = epics.get(id);
-            historyManager.add(epic);
-            return epics.get(id);
-        } catch (Exception e) {
-            throw new NotFoundException("Не найден такой эпик");
+        Epic epic = epics.get(id);
+        if (epic == null) {
+            throw new NotFoundException("Эпик не найден: id=" + id);
         }
+        historyManager.add(epic);
+        return epic;
     }
 
     @Override
@@ -205,13 +205,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Subtask getSubtaskById(int id) {
-        try {
-            Subtask subtask = subtasks.get(id);
-            historyManager.add(subtask);
-            return subtasks.get(id);
-        } catch (Exception e) {
-            throw new NotFoundException("Не найдена такая подзадача");
+        Subtask subtask = subtasks.get(id);
+        if (subtask == null) {
+            throw new NotFoundException("Не найдена такая подзадача: id=" + id);
         }
+        historyManager.add(subtask);
+        return subtask;
     }
 
     @Override

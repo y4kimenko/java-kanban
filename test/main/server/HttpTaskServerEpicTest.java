@@ -106,7 +106,7 @@ class HttpTaskServerEpicTest {
 
         assertEquals(taskManager.getEpicById(7), epic);
         assertEquals(200, response1.statusCode());
-        assertEquals(200, response2.statusCode());
+        assertEquals(404, response2.statusCode());
     }
 
     @Test

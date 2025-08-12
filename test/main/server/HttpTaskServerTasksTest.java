@@ -106,7 +106,7 @@ class HttpTaskServerTasksTest {
 
         assertEquals(taskManager.getTaskById(2), task);
         assertEquals(200, response1.statusCode());
-        assertEquals(200, response2.statusCode());
+        assertEquals(404, response2.statusCode());
     }
 
     @Test
