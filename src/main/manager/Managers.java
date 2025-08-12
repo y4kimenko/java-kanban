@@ -2,11 +2,8 @@ package main.manager;
 
 import java.io.File;
 
-public final class Managers {
-    private Managers() {
-    }
-
-    public static TaskManager getDefaultTaskManager() {
+public class Managers {
+    public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
 
@@ -14,7 +11,7 @@ public final class Managers {
         return new InMemoryHistoryManager();
     }
 
-    public static FileBackedTaskManager getDefaultFileBackedTaskManager() {
-        return FileBackedTaskManager.loadFromFile(new File("\\resources\\package.csv"));
+    public static FileBackedTaskManager getFileBackedManager(File file) {
+        return FileBackedTaskManager.loadFromFile(file);
     }
 }

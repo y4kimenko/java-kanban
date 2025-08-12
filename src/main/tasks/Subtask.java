@@ -1,5 +1,8 @@
 package main.tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Subtask extends Task {
     private final int epicId;
 
@@ -8,12 +11,17 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
-    // клонирующий конструктор
+    public Subtask(String name, String description, StatusTask status,
+                   LocalDateTime startTime, Duration duration, int epicId) {
+        super(name, description, status, startTime, duration);
+        this.epicId = epicId;
+    }
+
+    // копирующий конструктор
     public Subtask(Subtask subtask) {
         super(subtask);
         this.epicId = subtask.getEpicId();
     }
-
 
     public int getEpicId() {
         return epicId;
@@ -22,11 +30,12 @@ public class Subtask extends Task {
     @Override
     public String toString() {
         return "Subtask{" +
-                "indexEpic=" + epicId +
+                "epicId=" + epicId +
                 ", id=" + getId() +
                 ", name='" + getName() + '\'' +
-                ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +
+                ", startTime=" + getStartTime() +
+                ", duration=" + (getDuration() == null ? null : getDuration().toMinutes()) +
                 '}';
     }
 
