@@ -14,15 +14,25 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     @TempDir
     Path tempDir;
 
+    private File file;
+
+    @Override
+    protected FileBackedTaskManager createManager() {
+        file = tempDir.resolve("tasks.csv").toFile();
+        return FileBackedTaskManager.loadFromFile(file);
+    }
+
+    // --- Специфичные тесты для FileBackedTaskManager остаются ---
+
     @Test
-    void saveAndReload_keepsAllFieldsAndPriority() throws Exception {
-        File file = tempDir.resolve("tasks.csv").toFile();
-        FileBackedTaskManager m1 = FileBackedTaskManager.loadFromFile(file);
+    void saveAndReload_keepsAllFieldsAndPriority() {
+        FileBackedTaskManager m1 = createManager();
 
         Epic e1 = m1.createEpic(new Epic("E","desc"));
         Task t1 = m1.createTask(new Task("T","t-desc", StatusTask.NEW,
@@ -37,7 +47,7 @@ class FileBackedTaskManagerTest {
         Task t2 = m2.searchTaskById(t1.getId());
         Subtask s2 = m2.searchSubtaskById(s1.getId());
 
-        // ---- сравнение Task
+        // ---- сравнение Task (все поля)
         assertNotNull(t2);
         assertEquals(t1.getId(), t2.getId());
         assertEquals(t1.getName(), t2.getName());
@@ -79,9 +89,8 @@ class FileBackedTaskManagerTest {
     void brokenLine_throwsManagerSaveException() throws Exception {
         File bad = tempDir.resolve("bad.csv").toFile();
         Files.writeString(bad.toPath(),
-                FileBackedTaskManager.CSV_HEADER + "\n" +   // используем константу заголовка
+                FileBackedTaskManager.CSV_HEADER + "\n" +
                         "oops,this,is,not,valid\n");
-
         assertThrows(ManagerSaveException.class, () -> FileBackedTaskManager.loadFromFile(bad));
     }
 }
