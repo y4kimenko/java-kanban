@@ -1,55 +1,108 @@
 package main.tasks;
 
-import main.manager.InMemoryTaskManager;
-import main.manager.TaskManager;
+import org.junit.jupiter.api.BeforeEach;
+import main.managers.Managers;
+import main.managers.TaskManager;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class EpicTest {
+    private static Epic epic1;
+    private static Subtask subtask1;
+    private static Subtask subtask2;
+    private static Subtask subtask3;
+    private static Subtask subtask4;
+    private static Subtask subtask5;
+    private static Subtask subtask6;
 
-    @Test
-    void statusCalculated_fromSubtasks_allNew() {
-        TaskManager manager = new InMemoryTaskManager();
+    private static TaskManager taskManager;
 
-        Epic epic = manager.createEpic(new Epic("Release", ""));
-        Subtask s1 = new Subtask("S1", "", StatusTask.NEW,
-                LocalDateTime.parse("2025-08-11T10:00"), Duration.ofMinutes(10), epic.getId());
-        Subtask s2 = new Subtask("S2", "", StatusTask.NEW,
-                LocalDateTime.parse("2025-08-11T12:00"), Duration.ofMinutes(20), epic.getId());
 
-        manager.createSubtask(s1);
-        manager.createSubtask(s2);
-
-        Epic actual = manager.searchEpicById(epic.getId());
-
-        assertEquals(LocalDateTime.parse("2025-08-11T10:00"), actual.getStartTime());
-        assertEquals(LocalDateTime.parse("2025-08-11T12:20"), actual.getEndTime());
-        assertEquals(Duration.ofMinutes(30), actual.getDuration());
+    @BeforeEach
+    void setUp() {
+        taskManager = Managers.getDefault();
+        epic1 = new Epic("Перевод денег", "Перевести деньги другу");
+        subtask1 = new Subtask("Приложение банка", "Открыть приложение банка", StatusTask.DONE, 1);
+        subtask2 = new Subtask("Открыть вкладку расходов", "Открытие вкладки расходов",
+                StatusTask.NEW, 1);
+        subtask3 = new Subtask("Отправка", "Отправка денег другу", StatusTask.DONE, 1);
+        subtask4 = new Subtask("Открыть вкладку расходов", "Открытие вкладки расходов",
+                StatusTask.IN_PROGRESS, 1, Duration.ofMinutes(90),
+                LocalDateTime.of(2025, Month.JULY, 12, 19, 37));
+        subtask5 = new Subtask("Приложение банка", "Открыть приложение банка", StatusTask.IN_PROGRESS,
+                1, Duration.ofMinutes(90), LocalDateTime.of(2025, Month.JULY, 11, 19,
+                37));
+        subtask6 = new Subtask("Приложение банка", "Открыть приложение банка", StatusTask.NEW, 1);
     }
 
     @Test
-    void timesCleared_whenNoSubtasks() {
-        TaskManager manager = new InMemoryTaskManager();
-
-        Epic epic = manager.createEpic(new Epic("Empty", ""));
-        Epic actual = manager.searchEpicById(epic.getId());
-
-        // у эпика без подзадач временные поля должны быть null
-        assertNull(actual.getStartTime());
-        assertNull(actual.getEndTime());
-        assertNull(actual.getDuration());
+    void epicIsNewWhenAllSubtaskStatusesNew() {
+        taskManager.addEpic(epic1);
+        taskManager.addSubtask(subtask2);
+        taskManager.addSubtask(subtask6);
+        assertEquals(StatusTask.NEW, taskManager.getEpicById(1).getStatus());
     }
 
     @Test
-    void equalsById_forEpics() {
-        Epic e1 = new Epic("A", "");
-        e1.setId(7);
-        Epic e2 = new Epic("B", "");
-        e2.setId(7);
-        assertEquals(e1, e2);
+    void epicIsInProgressWhenSubtaskStatusesNewAndDone() {
+        taskManager.addEpic(epic1);
+        taskManager.addSubtask(subtask1);
+        taskManager.addSubtask(subtask2);
+        assertEquals(StatusTask.IN_PROGRESS, taskManager.getEpicById(1).getStatus());
+    }
+
+    @Test
+    void epicIsInProgressWhenSubtaskStatusesNewAndInProgress() {
+        taskManager.addEpic(epic1);
+        taskManager.addSubtask(subtask2);
+        taskManager.addSubtask(subtask5);
+        assertEquals(StatusTask.IN_PROGRESS, taskManager.getEpicById(1).getStatus());
+    }
+
+    @Test
+    void epicIsInProgressWhenSubtaskStatusesDoneAndInProgress() {
+        taskManager.addEpic(epic1);
+        taskManager.addSubtask(subtask1);
+        taskManager.addSubtask(subtask5);
+        assertEquals(StatusTask.IN_PROGRESS, taskManager.getEpicById(1).getStatus());
+    }
+
+    @Test
+    void epicIsInProgressWhenSubtaskStatusesAllInProgress() {
+        taskManager.addEpic(epic1);
+        taskManager.addSubtask(subtask4);
+        taskManager.addSubtask(subtask5);
+        assertEquals(StatusTask.IN_PROGRESS, taskManager.getEpicById(1).getStatus());
+    }
+
+    @Test
+    void epicIsNewWhenAllSubtaskStatusesDone() {
+        taskManager.addEpic(epic1);
+        taskManager.addSubtask(subtask1);
+        taskManager.addSubtask(subtask3);
+        assertEquals(StatusTask.DONE, taskManager.getEpicById(1).getStatus());
+    }
+
+    @Test
+    void checkEpicStartAndEndTime() {
+        taskManager.addEpic(epic1);
+        taskManager.addSubtask(subtask4);
+        taskManager.addSubtask(subtask5);
+        List<LocalDateTime> endTime = taskManager.getAllEpics()
+                .stream()
+                .map(Epic::getEndTime)
+                .toList();
+        List<LocalDateTime> startTime = taskManager.getAllEpics()
+                .stream()
+                .map(Epic::getStartTime)
+                .toList();
+        assertEquals(subtask5.getStartTime(), startTime.getFirst());
+        assertEquals(subtask4.getEndTime(), endTime.getFirst());
     }
 }
