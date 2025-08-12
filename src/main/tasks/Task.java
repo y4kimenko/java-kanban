@@ -100,11 +100,7 @@ public class Task {
             return true;
         } else if (this.getStartTime().isBefore(task.getStartTime()) && this.getEndTime().isAfter(task.getStartTime())) {
             return true;
-        } else if (this.getStartTime().isAfter(task.getStartTime()) && task.getEndTime().isAfter(this.getStartTime())) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return this.getStartTime().isAfter(task.getStartTime()) && task.getEndTime().isAfter(this.getStartTime());
     }
 
     @Override
