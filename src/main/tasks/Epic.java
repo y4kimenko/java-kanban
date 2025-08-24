@@ -7,7 +7,7 @@ import java.util.Objects;
 import static main.managers.InMemoryTaskManager.formatter;
 
 public class Epic extends Task {
-    protected ArrayList<Integer> subtasksIds = new ArrayList<>();
+     ArrayList<Integer> subtasksIds = new ArrayList<>();
     protected LocalDateTime endTime;
 
     public Epic(String name, String description) {
@@ -16,7 +16,7 @@ public class Epic extends Task {
 
     public Epic(String name, String description, int id) {
         this(name, description);
-        this.id = id;
+        setId(id);
     }
 
     public ArrayList<Integer> getSubtasksIds() {
@@ -39,23 +39,23 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        if (endTime != null && startTime != null) {
+        if (endTime != null && getStartTime() != null) {
             return '\n' +
-                    "Название эпика: " + name + '\n' +
-                    "Описание эпика: " + description + '\n' +
-                    "ID эпика: " + id + '\n' +
-                    "Статус эпика: " + status + '\n' +
+                    "Название эпика: " + getName() + '\n' +
+                    "Описание эпика: " + getDescription() + '\n' +
+                    "ID эпика: " + getId() + '\n' +
+                    "Статус эпика: " + getStatus() + '\n' +
                     "ID подзадач: " + subtasksIds + '\n' +
-                    "Время начала выполнения эпика: " + startTime.format(formatter) + '\n' +
+                    "Время начала выполнения эпика: " + getStartTime().format(formatter) + '\n' +
                     "Время окончания выполнения эпика: " + endTime.format(formatter) + '\n' +
-                    "Продолжительность выполнения задачи: " + duration.toHours() + " ч. " + duration.toMinutesPart() +
+                    "Продолжительность выполнения задачи: " + getDuration().toHours() + " ч. " + getDuration().toMinutesPart() +
                     " мин." + '\n' + '\n';
         } else {
             return '\n' +
-                    "Название эпика: " + name + '\n' +
-                    "Описание эпика: " + description + '\n' +
-                    "ID эпика: " + id + '\n' +
-                    "Статус эпика: " + status + '\n' +
+                    "Название эпика: " + getName() + '\n' +
+                    "Описание эпика: " + getDescription() + '\n' +
+                    "ID эпика: " + getId() + '\n' +
+                    "Статус эпика: " + getStatus() + '\n' +
                     "ID подзадач: " + subtasksIds + '\n' +
                     '\n';
         }

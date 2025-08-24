@@ -7,52 +7,52 @@ import java.util.Objects;
 import static main.managers.InMemoryTaskManager.formatter;
 
 public class Subtask extends Task {
-    protected int epicId;
+    private final int epicId;
 
     public Subtask(String name, String description, StatusTask status, int epicId) {
         super(name, description);
         this.epicId = epicId;
-        this.status = status;
+        setStatus(status);
     }
 
     public Subtask(String name, String description, StatusTask status, int epicId, int id) {
         this(name, description, status, epicId);
-        this.id = id;
+        setId(id);
     }
 
     public Subtask(String name, String description, StatusTask status, int epicId, int id, Duration duration,
                    LocalDateTime startTime) {
         this(name, description, status, epicId, id);
-        this.duration = duration;
-        this.startTime = startTime;
+        setDuration(duration);
+        setStartTime(startTime);
     }
 
     public Subtask(String name, String description, StatusTask status, int epicId, Duration duration,
                    LocalDateTime startTime) {
         this(name, description, status, epicId);
-        this.duration = duration;
-        this.startTime = startTime;
+        setDuration(duration);
+        setStartTime(startTime);
     }
 
     @Override
     public String toString() {
-        if (duration != null && startTime != null) {
+        if (getDuration() != null && getStartTime() != null) {
             return '\n' +
-                    "Название подзадачи: " + name + '\n' +
-                    "Описание подзадачи: " + description + '\n' +
-                    "ID подзадачи: " + id + '\n' +
-                    "Статус подзадачи: " + status + '\n' +
+                    "Название подзадачи: " + getName() + '\n' +
+                    "Описание подзадачи: " + getDescription() + '\n' +
+                    "ID подзадачи: " + getId() + '\n' +
+                    "Статус подзадачи: " + getStatus() + '\n' +
                     "ID эпика: " + epicId + '\n' +
-                    "Время старта выполнения подзадачи: " + startTime.format(formatter) + '\n' +
+                    "Время старта выполнения подзадачи: " + getStartTime().format(formatter) + '\n' +
                     "Время окончания выполнения задачи: " + getEndTime().format(formatter) + '\n' +
-                    "Продолжительность выполнения задачи: " + duration.toHours() + " ч. " + duration.toMinutesPart() +
+                    "Продолжительность выполнения задачи: " + getDuration().toHours() + " ч. " + getDuration().toMinutesPart() +
                     " мин." + '\n' + '\n';
         } else {
             return '\n' +
-                    "Название подзадачи: " + name + '\n' +
-                    "Описание подзадачи: " + description + '\n' +
-                    "ID подзадачи: " + id + '\n' +
-                    "Статус подзадачи: " + status + '\n' +
+                    "Название подзадачи: " + getName() + '\n' +
+                    "Описание подзадачи: " + getDescription() + '\n' +
+                    "ID подзадачи: " + getId() + '\n' +
+                    "Статус подзадачи: " + getStatus() + '\n' +
                     "ID эпика: " + epicId + '\n' +
                     '\n';
         }

@@ -8,12 +8,12 @@ import java.util.Objects;
 import static main.managers.InMemoryTaskManager.formatter;
 
 public class Task {
-    protected String name;
-    protected String description;
-    protected int id;
-    protected StatusTask status;
-    protected Duration duration;
-    protected LocalDateTime startTime;
+    private String name;
+    private String description;
+    private int id;
+    private StatusTask status;
+    private Duration duration;
+    private LocalDateTime startTime;
 
 
     public Task(String name, String description, StatusTask status, int id) {
