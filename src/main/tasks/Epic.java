@@ -7,7 +7,7 @@ import java.util.Objects;
 import static main.managers.InMemoryTaskManager.formatter;
 
 public class Epic extends Task {
-     ArrayList<Integer> subtasksIds = new ArrayList<>();
+    ArrayList<Integer> subtasksIds = new ArrayList<>();
     protected LocalDateTime endTime;
 
     public Epic(String name, String description) {

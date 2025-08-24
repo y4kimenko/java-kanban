@@ -26,7 +26,7 @@ class TaskTest {
 
     @Test
     void setUpEndTime() {
-        assertEquals(task1.getEndTime(), task1.startTime.plus(task1.duration));
+        assertEquals(task1.getEndTime(), task1.getStartTime().plus(task1.getDuration()));
     }
 
     @Test

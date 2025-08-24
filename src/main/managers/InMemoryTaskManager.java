@@ -62,7 +62,6 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-
     @Override
     public void updateTask(Task task) throws AddTaskException {
         boolean isIntersect = false;

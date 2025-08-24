@@ -1,8 +1,8 @@
 package main.tasks;
 
-import org.junit.jupiter.api.BeforeEach;
 import main.managers.Managers;
 import main.managers.TaskManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EpicTest {
     private static Epic epic1;

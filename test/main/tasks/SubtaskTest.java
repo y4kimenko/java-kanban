@@ -3,7 +3,7 @@ package main.tasks;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SubtaskTest {
 
@@ -12,8 +12,8 @@ class SubtaskTest {
 
     @BeforeEach
     void setUp() {
-        subtask1 = new Subtask("Description task 1", "Task-1", StatusTask.NEW,3);
-        subtask2 = new Subtask("Description task 1", "Task-1",StatusTask.NEW,3);
+        subtask1 = new Subtask("Description task 1", "Task-1", StatusTask.NEW, 3);
+        subtask2 = new Subtask("Description task 1", "Task-1", StatusTask.NEW, 3);
     }
 
     @Test

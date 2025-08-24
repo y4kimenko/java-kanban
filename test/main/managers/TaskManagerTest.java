@@ -1,21 +1,20 @@
 package main.managers;
 
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import main.tasks.Epic;
 import main.tasks.StatusTask;
 import main.tasks.Subtask;
 import main.tasks.Task;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-abstract class TaskManagerTest <T extends TaskManager>{
+abstract class TaskManagerTest<T extends TaskManager> {
 
     T tm;
     static Task task1;
@@ -61,7 +60,7 @@ abstract class TaskManagerTest <T extends TaskManager>{
                 LocalDateTime.of(2025, Month.JULY, 11, 19, 37));
         subtask6 = new Subtask("Открыть вкладку расходов", "Открытие вкладки расходов",
                 StatusTask.NEW, 3, Duration.ofMinutes(15),
-                LocalDateTime.of(2025, Month.JULY, 11, 15 , 25));
+                LocalDateTime.of(2025, Month.JULY, 11, 15, 25));
         subtask7 = new Subtask("Отправка", "Отправка денег другу", StatusTask.DONE, 3,
                 Duration.ofMinutes(40), LocalDateTime.of(2025, Month.JULY, 11, 18, 10));
         epic4 = new Epic("Пройти курс", "Пройти курс от ЯП");

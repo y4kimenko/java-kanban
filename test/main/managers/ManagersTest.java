@@ -8,7 +8,7 @@ class ManagersTest {
     @Test
     void testTaskManagerIsAlwaysInitialized() {
         TaskManager manager = Managers.getDefault();
-        assertEquals(InMemoryTaskManager.class, manager.getClass());
+        assertEquals(FileBackedTaskManager.class, manager.getClass());
     }
 
     @Test
